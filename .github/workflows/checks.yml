@@ -44,4 +44,4 @@ jobs:
       - run: poetry run ruff .
       - run: poetry run black .
       # - run: poetry run mypy site_builder tests
-      - run: pytest
+      - run: poetry run pytest
