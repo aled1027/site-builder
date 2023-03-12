@@ -19,7 +19,7 @@ def test_one():
     assert mkd.metadata.filename == "foo.md"
     assert mkd.metadata.title == "foobar"
     assert mkd.metadata.date == datetime.date(1987, 2, 23)
-    assert mkd.metadata.draft == False
+    assert mkd.metadata.draft is False
     assert mkd.metadata.tags == ["test", "tag"]
 
     # Check length instead of checking contents

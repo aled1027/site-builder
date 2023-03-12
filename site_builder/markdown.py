@@ -50,7 +50,7 @@ class Markdown:
         self, contents: str, extra_fields: dict[str, Any]
     ) -> MarkdownMetadata:
         if not contents.startswith(self.metadata_marker):
-            raise ValueError(f"Markdown metadata not found")
+            raise ValueError("Markdown metadata not found")
 
         start_idx = len(self.metadata_marker)
         end_idx = contents.find(self.metadata_marker, len(self.metadata_marker))
