@@ -13,18 +13,20 @@ class MarkdownMetadata(pydantic.BaseModel):
     date: datetime.date
     tags: list[str] = pydantic.Field(default_factory=list)
     draft: bool = False
+    filename: str
 
 
 class Markdown:
     metadata_marker = "---"
 
     def __init__(self, filename: str, contents: str) -> None:
-        self.filename = filename
         self.contents = contents
         self.md_body = self._parse_body(self.contents)
         self.html_body = self._process_html_body(self._md_to_html(self.md_body))
         self.html_preview = self.html_body.replace("'", '"').replace("\n", "")
-        self.metadata = self._parse_metadata(contents)
+        self.metadata = self._parse_metadata(
+            contents, extra_fields={"filename": filename}
+        )
 
     def _process_html_body(self, html_body: str) -> str:
         return html_body.replace('src="assets', 'src="/assets/site_assets')
@@ -44,9 +46,11 @@ class Markdown:
         doc = pandoc.read(md_body)
         return pandoc.write(doc, format="html")
 
-    def _parse_metadata(self, contents: str) -> MarkdownMetadata:
+    def _parse_metadata(
+        self, contents: str, extra_fields: dict[str, Any]
+    ) -> MarkdownMetadata:
         if not contents.startswith(self.metadata_marker):
-            return MarkdownMetadata(**{})
+            raise ValueError(f"Markdown metadata not found")
 
         start_idx = len(self.metadata_marker)
         end_idx = contents.find(self.metadata_marker, len(self.metadata_marker))
@@ -65,6 +69,8 @@ class Markdown:
             raise ValueError("Invalid date")
         metadata["date"] = date
         metadata["tags"] = metadata.get("tags", [])
+
+        metadata = metadata | extra_fields
 
         return MarkdownMetadata(**metadata)
 
