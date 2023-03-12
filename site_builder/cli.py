@@ -4,11 +4,12 @@ Deletes posts.db:db table and then recreates it from the files in the posts dire
 
 import glob
 from typing import Any
-from .markdown import Markdown
 
 import click
 from sqlite_utils import Database
 from sqlite_utils.utils import TypeTracker
+
+from .markdown import Markdown
 
 
 def build_db_from_directory(directory: str, database: str) -> None:
